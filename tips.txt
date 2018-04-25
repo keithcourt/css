@@ -1,0 +1,157 @@
+1.oracle create sequence
+  -- Create sequence 
+
+create sequence SEQ_AAZ461
+minvalue 1
+maxvalue 9999999999999999
+start with 181
+increment by 1
+cache 20
+CYCLE
+order;
+
+
+
+oracle创建用户、授予权限及删除用户
+ 
+创建用户
+create user lisi identified by lisi;
+ 
+oracle对表空间 USERS 无权限
+alter user 用户名 quota unlimited on users;
+ 
+//创建临时表空间
+create temporary tablespace test_temp 
+tempfile 'E:/oracle/product/10.2.0/oradata/testserver/test_temp01.dbf' 
+size 32m 
+autoextend on 
+next 32m maxsize 2048m 
+extent management local;
+ 
+//创建数据表空间 
+create tablespace test_data 
+logging   www.2cto.com  
+datafile 'E:/oracle/product/10.2.0/oradata/testserver/test_data01.dbf' 
+size 32m 
+autoextend on 
+next 32m maxsize 2048m 
+extent management local;
+ 
+//创建用户并指定表空间 
+create user username identified by password 
+default tablespace test_data 
+temporary tablespace test_temp;
+ 
+删除用户
+drop user 用户名 cascade;---cascade 级联
+ 
+//给用户授予权限
+grant connect,resource to username;
+//以后以该用户登录，创建的任何数据库对象都属于test_temp 和test_data表空间，这就不用
+在每创建一个对象给其指定表空间了。  www.2cto.com  
+ 
+授予权限
+-- 分配用户 Sam 创建表，创建序列，创建存储过程和创建视图的权限
+grant create table,create sequence,create view,create procedure
+to sam
+ 
+l 去除用户权限
+ 
+-- 去除用户 Sam 创建视图的权限
+revoke create view from sam;
+ 
+l 分配角色权限
+ 
+-- 分配角色 manager 创建表，创建序列的权限
+grant create table,create sequence to manager;
+ 
+l 去除用户权限
+ 
+-- 去除角色 manager 创建视图的权限
+revoke create table from manager;
+ 
+l 分配表的Select权限给用户
+ 
+-- 分配用户 Sam 在表 tt 上的 select 权限
+grant select on tt to sam;
+-- 去除用户 Sam 在表 tt 上的 select 权限
+revoke select on tt from sam;
+ 
+l 分配表的Update权限给角色
+
+-- 分配表的 Update 权限给角色 Manager
+grant update on tt to manager;
+-- 去除表的 Update 权限给角色 Manager
+revoke update on tt from manager;
+ 
+l 分配表的Select权限给所有用户
+ 
+-- 分配表的 Select 权限给所有用户
+grant select on tt to public;
+-- 去除表的 Select 权限给所有用户
+revoke select on tt from public;
+ 
+l 分配表的Select权限给用户，且允许他授权给其他人
+ 
+-- 分配表的 Select 权限给用户 Sam ，且允许 sam 罢表的 select 权限授权给他人
+grant select on tt to sam with grant option;
+
+
+
+-- 声明游标；CURSOR cursor_name IS select_statement
+
+--For 循环游标
+--（1）定义游标
+--（2）定义游标变量
+--（3）使用for循环来使用这个游标
+declare
+       --类型定义
+       cursor c_job
+       is
+       select empno,ename,job,sal
+       from emp
+       where job='MANAGER';
+       --定义一个游标变量v_cinfo c_emp%ROWTYPE ，该类型为游标c_emp中的一行数据类型
+       c_row c_job%rowtype;
+begin
+       for c_row in c_job loop
+         dbms_output.put_line(c_row.empno||'-'||c_row.ename||'-'||c_row.job||'-'||c_row.sal);
+       end loop;
+end;
+
+
+      
+--Fetch游标
+--使用的时候必须要明确的打开和关闭
+
+declare 
+       --类型定义
+       cursor c_job
+       is
+       select empno,ename,job,sal
+       from emp
+       where job='MANAGER';
+       --定义一个游标变量
+       c_row c_job%rowtype;
+begin
+       open c_job;
+         loop
+           --提取一行数据到c_row
+           fetch c_job into c_row;
+           --判读是否提取到值，没取到值就退出
+           --取到值c_job%notfound 是false 
+           --取不到值c_job%notfound 是true
+           exit when c_job%notfound;
+            dbms_output.put_line(c_row.empno||'-'||c_row.ename||'-'||c_row.job||'-'||c_row.sal);
+         end loop;
+       --关闭游标
+      close c_job;
+end;
+
+三目    ?   术语解释
+??基本医疗保险药品目录：为了保障职工基本医疗用药，合理控制药品费用，规范基本医疗保险的用药管理，由国家及省（自治区、直辖市）劳动保障行政部门负责组织制定的基本医疗保险的用药范围，即可由基本医疗保险基金支付的药品范畴。
+??基本医疗保险诊疗目录：指符合以下条件的各种医疗技术劳务项目和采用医疗仪器、设备与医用材料进行的诊断、治疗项目
+??临床诊疗必需、安全有效、费用适宜的诊疗项目
+??由物价部门制定了收费标准的诊疗项目
+??由定点医疗机构为参保人员提供的定点医疗服务范围内的诊疗项目
+??基本医疗服务设施：基本医疗保险医疗服务设施是指由定点医疗机构提供的，参保人员在接受诊断、治疗和护理过程中必需的生活服务设施

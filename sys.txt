@@ -1,0 +1,15 @@
+导入：imp report/report@192.168.200.3:1521/orcl file=E:/report1.dmp full=y;
+
+导出;exp report/report@192.168.200.3:1521/orcl file=E:/report1.dmp;
+
+OS 验证登录: sqlplus / as sysdba;
+sqlplus report/report as sysdba;
+
+conn /as sysdba;
+
+create user report identified by report;
+grant connect,resource,dba to report;
+
+select table_name from user_tables;
+select * from user_role_privs; 
+show user;

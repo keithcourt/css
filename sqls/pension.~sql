@@ -1,0 +1,10 @@
+ SELECT max(distinct a.aie136) AS aie136
+        FROM id24 a id54
+       WHERE exists(SELECT 1 
+                      FROM id33 b,id34 c
+                     WHERE b.aaz434 = c.aaz434
+                       AND c.aaz430 = a.aaz430 
+                       AND b.aaz434 = 184)
+                       
+                       
+                       ,;select * from id54;

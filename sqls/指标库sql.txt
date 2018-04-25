@@ -1,0 +1,81 @@
+http://192.168.10.70:8090/svn/JY12YF00901/04.Implement/gczbk
+
+192.168.10.119  mydb
+
+sicp3yhzbk   zbk
+数据在bj_zb   bj_dm两张表
+
+    <dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="dmbs">  
+				dmbs = 'Y'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="zblx">  
+				zblx = 'D'
+			</isNotEmpty>
+	</dynamic> 	
+
+
+
+<select id="queryZbInfoByKeyWord" parameterClass="map" resultClass="java.util.HashMap">
+   SELECT aaa100,
+          aaa101,
+          zblx,
+          zbcd,
+          dmbs,
+          aae013
+     FROM bj_zb
+	 <dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="aaa100">  
+				aaa100 like '%'||UPPER(#aaa100#)||'%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="nameKeys">  
+				(aaa101 like 
+            	<iterate property="nameKeys" open="'%'||" conjunction="||'%'||" close="||'%'">  
+                    #nameKeys[]#  
+                </iterate>  
+                  OR
+                 aaa013 like 
+            	<iterate property="nameKeys" open="'%'||" conjunction="||'%'||" close="||'%'">  
+                    #nameKeys[]#  
+                </iterate>
+                )  
+			</isNotEmpty> 
+		</dynamic> 	     
+</select>
+
+
+<!-- 根据指标代码，指标名称关键字查询指标项 -->
+<select id="queryMzInfoByKeyWord" parameterClass="map" resultClass="java.util.HashMap">
+   SELECT aaa100,           <!-- 指标代码 -->
+          aaa101,           <!-- 指标名称 -->
+          aaa102,           <!-- 代码值 -->
+          aaa103            <!-- 代码名称 -->
+     FROM bj_dm             <!-- 代码表 -->
+	 <dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="codeKeys">  
+			    ( 
+				<iterate property="codeKeys">  
+                   aaa100 LIKE '%'||UPPER(#codeKeys[]#)||'%' OR
+                </iterate> 
+                <![CDATA[ 1 <> 1 ]]>
+                OR
+                <iterate property="codeKeys">  
+                   aaa102 LIKE '%'||UPPER(#codeKeys[]#)||'%' OR
+                </iterate>
+                <![CDATA[ 1 <> 1 ]]>
+                ) 
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="nameKeys">  
+				(aaa101 LIKE 
+            	<iterate property="nameKeys" open="'%'||" conjunction="||'%'||" close="||'%'">  
+                    #nameKeys[]#  
+                </iterate>  
+                 OR aaa103 LIKE 
+            	<iterate property="nameKeys" open="'%'||" conjunction="||'%'||" close="||'%'">  
+                    #nameKeys[]#  
+                </iterate>
+                )  
+			</isNotEmpty> 
+		</dynamic> 	 
+ ORDER BY aaa100		    
+</select>
