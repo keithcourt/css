@@ -1,8 +1,0 @@
-SELECT * from zb17
-SELECT * from zb14
-DELETE zb14
-
-
-SELECT * from zb12
-SELECT * from zb11
-
